@@ -35,6 +35,13 @@ async function apiRequest(path, options = {}) {
   }
 
   const response = await fetch(apiUrl(path), init);
+
+  // Detect non-JSON responses (e.g. Vercel Deployment Protection login page)
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error("API returned non-JSON response (deployment may be protected)");
+  }
+
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
 
@@ -109,6 +116,10 @@ function toRemoteGoalPayload(goal) {
 
 async function syncStateFromApi() {
   try {
+    // Health check first — bail early if API is unreachable or protected
+    const health = await apiRequest("health");
+    if (!health || !health.ok) throw new Error("API not healthy");
+
     const [income, expenses, goals] = await Promise.all([
       apiRequest("income"),
       apiRequest("expenses"),
@@ -119,11 +130,14 @@ async function syncStateFromApi() {
     const mappedExpenses = expenses.map((item) => mapRemoteTransaction(item, "expense"));
     const mappedGoals = goals.map(mapRemoteGoal);
 
-    state.transactions = [...mappedIncome, ...mappedExpenses].sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return dateB - dateA;
-    });
+    // Only replace local data if the API returned non-empty results;
+    // otherwise keep local data intact (API may have been cold-started with empty /tmp)
+    const remoteTx = [...mappedIncome, ...mappedExpenses];
+    if (remoteTx.length > 0) {
+      state.transactions = remoteTx.sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      });
+    }
 
     if (mappedGoals.length > 0) {
       state.savingsGoals = mappedGoals;
@@ -431,7 +445,7 @@ function initRouter() {
 
 // ============== RENDER PAGES ==============
 function renderPage(page) {
-  const renderers = { dashboard: renderDashboard, tracker: renderTracker, budget: renderBudget, goals: renderGoals, challenge: renderChallenge, analytics: renderAnalytics, settings: renderSettings, recommend: renderRecommend, ai: renderAI };
+  const renderers = { dashboard: renderDashboard, tracker: renderTracker, budget: renderBudget, goals: renderGoals, challenge: renderChallenge, analytics: renderAnalytics, settings: renderSettings, recommend: renderRecommend };
   if (renderers[page]) {
     renderers[page]();
     requestAnimationFrame(() => animatePageContent(page));
@@ -770,14 +784,11 @@ function addTransaction(e) {
   saveState(); renderTxList();
   document.getElementById("tx-form").reset();
 
-  createRemoteTransaction(tx)
-    .then(() => {
-      apiOnline = true;
-    })
-    .catch(() => {
-      apiOnline = false;
-      showToast("Saved locally. API sync unavailable right now.");
-    });
+  if (apiOnline) {
+    createRemoteTransaction(tx)
+      .then(() => { apiOnline = true; })
+      .catch(() => { apiOnline = false; });
+  }
 }
 function deleteTx(id) {
   const tx = state.transactions.find(t => t.id === id);
@@ -1527,14 +1538,11 @@ function addGoal(e) {
   state.savingsGoals.push(goal);
   saveState(); hideModal(); renderGoals();
 
-  createRemoteGoal(goal)
-    .then(() => {
-      apiOnline = true;
-    })
-    .catch(() => {
-      apiOnline = false;
-      showToast("Goal saved locally. API sync unavailable right now.");
-    });
+  if (apiOnline) {
+    createRemoteGoal(goal)
+      .then(() => { apiOnline = true; })
+      .catch(() => { apiOnline = false; });
+  }
 }
 function showAddFundsModal(goalId) {
   const g = state.savingsGoals.find(g => g.id === goalId);
@@ -1550,14 +1558,11 @@ function addFunds(e, goalId) {
   if (g.saved > g.target) g.saved = g.target;
   saveState(); hideModal(); renderGoals();
 
-  updateRemoteGoal(g)
-    .then(() => {
-      apiOnline = true;
-    })
-    .catch(() => {
-      apiOnline = false;
-      showToast("Updated locally. API sync unavailable right now.");
-    });
+  if (apiOnline) {
+    updateRemoteGoal(g)
+      .then(() => { apiOnline = true; })
+      .catch(() => { apiOnline = false; });
+  }
 }
 
 // FAB click
