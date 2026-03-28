@@ -29,6 +29,13 @@ From the `BudgetIT` folder:
 
 ```bash
 npm install
+npm run dev
+```
+
+Production build and run:
+
+```bash
+npm run build
 npm run start
 ```
 
