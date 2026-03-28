@@ -9,20 +9,6 @@ BudgetIt is a personal finance workspace with UI prototypes and reference assets
 
 ## Quick Start
 
-### Main app
-
-1. Open `BudgetIT/index.html` in your browser.
-2. Or run with a local static server from the `BudgetIT` folder.
-
-Example using Node:
-
-```bash
-cd BudgetIT
-npx serve .
-```
-
-Then open the local URL shown in your terminal.
-
 ### Backend API
 
 From the `BudgetIT` folder:
@@ -32,6 +18,12 @@ npm install
 npm run dev
 ```
 
+Open:
+
+- `http://localhost:3001/` (landing page)
+- `http://localhost:3001/app` (main application)
+- `http://localhost:3001/api/health` (API health)
+
 Production build and run:
 
 ```bash
@@ -39,7 +31,7 @@ npm run build
 npm run start
 ```
 
-API base URL: `http://localhost:3001`
+API base URL: `http://localhost:3001/api`
 
 Available endpoints:
 

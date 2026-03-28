@@ -30,10 +30,12 @@ interface ItemPayload {
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
+const APP_ROOT = process.cwd();
 const DB_PATH = path.join(process.cwd(), "data", "store.json");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(APP_ROOT));
 
 function initialDb(): DbSchema {
   return {
@@ -117,6 +119,14 @@ app.get("/api/summary", (_req: Request, res: Response) => {
       savingsGoals: db.savingsGoals.length,
     },
   });
+});
+
+app.get("/", (_req: Request, res: Response) => {
+  res.sendFile(path.join(APP_ROOT, "index.html"));
+});
+
+app.get("/app", (_req: Request, res: Response) => {
+  res.sendFile(path.join(APP_ROOT, "app.html"));
 });
 
 function registerCollectionRoutes(routeName: string, key: CollectionKey): void {
