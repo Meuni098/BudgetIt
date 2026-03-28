@@ -28,23 +28,6 @@ interface ItemPayload {
   notes?: string;
 }
 
-interface AiHistoryItem {
-  role?: "user" | "assistant";
-  content?: string;
-}
-
-interface AiContext {
-  monthlyIncome?: number;
-  totalExpenses?: number;
-  savingsRate?: number;
-  goals?: Array<{ name?: string; target?: number; saved?: number }>;
-}
-
-interface AiPayload {
-  message?: string;
-  history?: AiHistoryItem[];
-  context?: AiContext;
-}
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -113,32 +96,6 @@ function isValidCollectionKey(value: string): value is CollectionKey {
   return value === "income" || value === "expenses" || value === "savingsGoals";
 }
 
-function localAiReply(payload: AiPayload): string {
-  const question = String(payload.message || "").toLowerCase();
-  const ctx = payload.context || {};
-  const monthlyIncome = Number(ctx.monthlyIncome || 0);
-  const totalExpenses = Number(ctx.totalExpenses || 0);
-  const remaining = monthlyIncome - totalExpenses;
-  const savingsRate = Number(ctx.savingsRate || 0);
-
-  if (question.includes("food") || question.includes("grocery")) {
-    return "To reduce food spending, set a weekly food cap, plan meals before buying groceries, and log each snack/coffee expense the same day. A simple target is a 10-15% cut this week.";
-  }
-
-  if (question.includes("save") || question.includes("savings") || question.includes("goal")) {
-    const goalsText = (ctx.goals || [])
-      .slice(0, 3)
-      .map((goal) => `${goal.name || "Goal"}: ${Number(goal.saved || 0)} / ${Number(goal.target || 0)}`)
-      .join("; ");
-    return `Your current savings rate is about ${savingsRate}%. Improve it by automating a fixed transfer right after income day and reducing one high-frequency expense category. Top goals: ${goalsText || "No goals set yet."}`;
-  }
-
-  if (question.includes("budget") || question.includes("plan")) {
-    return `You currently have approximately ${remaining.toFixed(2)} left after expenses. Use a simple split: essentials first, then savings, then wants. Re-check your tracker every 2-3 days to avoid overspending.`;
-  }
-
-  return "I can help with budgeting, savings goals, and spending analysis. Ask me things like: how to reduce expenses this week, how much to save monthly, or how to rebalance your budget categories.";
-}
 
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ ok: true, service: "budgetit-api", runtime: "typescript" });
@@ -166,68 +123,6 @@ app.get("/api/summary", (_req: Request, res: Response) => {
   });
 });
 
-app.post("/api/ai", async (req: Request, res: Response) => {
-  const payload = (req.body || {}) as AiPayload;
-  const message = String(payload.message || "").trim();
-
-  if (!message) {
-    return res.status(400).json({ error: "message is required" });
-  }
-
-  const openAiKey = process.env.OPENAI_API_KEY;
-  if (!openAiKey) {
-    return res.json({ reply: localAiReply(payload), source: "local-fallback" });
-  }
-
-  try {
-    const systemPrompt = [
-      "You are BudgetIT AI Assistant.",
-      "Give concise, practical financial guidance.",
-      "Focus on budgeting, savings, and spending control.",
-      "Do not provide legal/medical advice.",
-    ].join(" ");
-
-    const history = Array.isArray(payload.history) ? payload.history.slice(-8) : [];
-    const messages = [
-      { role: "system", content: systemPrompt },
-      ...history
-        .filter((h) => h && (h.role === "user" || h.role === "assistant") && h.content)
-        .map((h) => ({ role: h.role as "user" | "assistant", content: String(h.content) })),
-      {
-        role: "user",
-        content: `${message}\n\nContext: ${JSON.stringify(payload.context || {})}`,
-      },
-    ];
-
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${openAiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.4,
-        messages,
-      }),
-    });
-
-    if (!response.ok) {
-      const fallback = localAiReply(payload);
-      return res.json({ reply: fallback, source: "local-fallback" });
-    }
-
-    const data = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-
-    const reply = data.choices?.[0]?.message?.content?.trim() || localAiReply(payload);
-    return res.json({ reply, source: "openai" });
-  } catch (_err) {
-    return res.json({ reply: localAiReply(payload), source: "local-fallback" });
-  }
-});
 
 app.get("/", (_req: Request, res: Response) => {
   res.sendFile(path.join(APP_ROOT, "index.html"));

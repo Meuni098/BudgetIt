@@ -1,5 +1,24 @@
 {
   "income": [],
   "expenses": [],
-  "savingsGoals": []
+  "savingsGoals": [
+    {
+      "id": "1774698791039-198688",
+      "title": "1000",
+      "amount": 1000,
+      "date": "2026-03-28",
+      "notes": "{\"icon\":\"smartphone\",\"color\":\"#6C5CE7\",\"saved\":0}",
+      "createdAt": "2026-03-28T11:53:11.039Z",
+      "updatedAt": "2026-03-28T11:53:11.039Z"
+    },
+    {
+      "id": "1774699628228-35305",
+      "title": "Phone",
+      "amount": 10000,
+      "date": "2026-03-28",
+      "notes": "{\"icon\":\"smartphone\",\"color\":\"#FF6B9D\",\"saved\":0}",
+      "createdAt": "2026-03-28T12:07:08.228Z",
+      "updatedAt": "2026-03-28T12:07:08.228Z"
+    }
+  ]
 }
