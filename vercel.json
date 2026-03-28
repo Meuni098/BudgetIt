@@ -1,8 +1,20 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/api/summary",
+      "destination": "/api/summary"
+    },
+    {
+      "source": "/api/:collection",
+      "destination": "/api/collection/:collection"
+    },
+    {
+      "source": "/api/:collection/:id",
+      "destination": "/api/collection/:collection/:id"
     },
     {
       "source": "/",

@@ -3,6 +3,167 @@ const CHALLENGE_LENGTH = 31;
 const ACTIVE_PROFILE_STORAGE_KEY = "budgetit_active_profile";
 const PROFILE_STORAGE_PREFIX = "budgetit_data_";
 const LEGACY_STORAGE_KEY = "budgetit_data";
+const API_BASE = (() => {
+  if (window.BUDGETIT_API_BASE) return String(window.BUDGETIT_API_BASE).replace(/\/$/, "");
+  const host = window.location.hostname;
+  const isLocalHost = host === "localhost" || host === "127.0.0.1";
+  return isLocalHost ? "http://localhost:3001/api" : "/api";
+})();
+
+let apiOnline = false;
+let uiIdSeed = 1000000;
+
+function nextUiId() {
+  uiIdSeed += 1;
+  return uiIdSeed;
+}
+
+function apiUrl(path) {
+  const clean = String(path || "").replace(/^\//, "");
+  return `${API_BASE}/${clean}`;
+}
+
+async function apiRequest(path, options = {}) {
+  const init = {
+    method: options.method || "GET",
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options,
+  };
+
+  if (init.body && typeof init.body !== "string") {
+    init.body = JSON.stringify(init.body);
+  }
+
+  const response = await fetch(apiUrl(path), init);
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    const message = data && data.error ? data.error : `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
+function parseJsonNotes(value, fallback = {}) {
+  if (!value) return fallback;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" ? parsed : fallback;
+  } catch (_err) {
+    return fallback;
+  }
+}
+
+function mapRemoteTransaction(item, type) {
+  const notes = parseJsonNotes(item.notes, {});
+  return {
+    id: nextUiId(),
+    remoteId: item.id,
+    type,
+    amount: Number(item.amount || 0),
+    category: notes.category || (type === "income" ? "Income" : "Other"),
+    description: notes.description || item.title || (type === "income" ? "Income" : "Expense"),
+    date: item.date || new Date().toISOString().slice(0, 10),
+  };
+}
+
+function mapRemoteGoal(item) {
+  const notes = parseJsonNotes(item.notes, {});
+  return {
+    id: nextUiId(),
+    remoteId: item.id,
+    name: item.title || "Savings Goal",
+    icon: notes.icon || "savings",
+    color: notes.color || "#00D2FF",
+    target: Number(item.amount || 0),
+    saved: Number(notes.saved || 0),
+  };
+}
+
+function toRemoteTxPayload(tx) {
+  return {
+    title: tx.description || (tx.type === "income" ? "Income" : "Expense"),
+    amount: Number(tx.amount || 0),
+    date: tx.date,
+    notes: JSON.stringify({
+      category: tx.category,
+      description: tx.description,
+      type: tx.type,
+    }),
+  };
+}
+
+function toRemoteGoalPayload(goal) {
+  return {
+    title: goal.name,
+    amount: Number(goal.target || 0),
+    notes: JSON.stringify({
+      icon: goal.icon,
+      color: goal.color,
+      saved: Number(goal.saved || 0),
+    }),
+  };
+}
+
+async function syncStateFromApi() {
+  try {
+    const [income, expenses, goals] = await Promise.all([
+      apiRequest("income"),
+      apiRequest("expenses"),
+      apiRequest("savings-goals"),
+    ]);
+
+    const mappedIncome = income.map((item) => mapRemoteTransaction(item, "income"));
+    const mappedExpenses = expenses.map((item) => mapRemoteTransaction(item, "expense"));
+    const mappedGoals = goals.map(mapRemoteGoal);
+
+    state.transactions = [...mappedIncome, ...mappedExpenses].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
+
+    if (mappedGoals.length > 0) {
+      state.savingsGoals = mappedGoals;
+    }
+
+    apiOnline = true;
+    saveState();
+    return true;
+  } catch (_err) {
+    apiOnline = false;
+    return false;
+  }
+}
+
+async function createRemoteTransaction(tx) {
+  const endpoint = tx.type === "income" ? "income" : "expenses";
+  const created = await apiRequest(endpoint, { method: "POST", body: toRemoteTxPayload(tx) });
+  tx.remoteId = created.id;
+  saveState();
+}
+
+async function deleteRemoteTransaction(tx) {
+  if (!tx.remoteId) return;
+  const endpoint = tx.type === "income" ? "income" : "expenses";
+  await apiRequest(`${endpoint}/${encodeURIComponent(tx.remoteId)}`, { method: "DELETE" });
+}
+
+async function createRemoteGoal(goal) {
+  const created = await apiRequest("savings-goals", { method: "POST", body: toRemoteGoalPayload(goal) });
+  goal.remoteId = created.id;
+  saveState();
+}
+
+async function updateRemoteGoal(goal) {
+  if (!goal.remoteId) return;
+  await apiRequest(`savings-goals/${encodeURIComponent(goal.remoteId)}`, {
+    method: "PUT",
+    body: toRemoteGoalPayload(goal),
+  });
+}
 
 const DEFAULT_STATE = {
   profile: { name: "Eunice", type: "student", role: "Student", initialized: false },
@@ -599,16 +760,40 @@ function addTransaction(e) {
   e.preventDefault();
   const amt = parseFloat(document.getElementById("tx-amount").value);
   if (!amt || amt <= 0) return;
-  state.transactions.unshift({
+  const tx = {
     id: nextId(state.transactions), type: txType, amount: amt,
     category: txType === "income" ? "Income" : document.getElementById("tx-cat").value,
     description: document.getElementById("tx-desc").value || (txType === "income" ? "Income" : "Expense"),
     date: document.getElementById("tx-date").value
-  });
+  };
+  state.transactions.unshift(tx);
   saveState(); renderTxList();
   document.getElementById("tx-form").reset();
+
+  createRemoteTransaction(tx)
+    .then(() => {
+      apiOnline = true;
+    })
+    .catch(() => {
+      apiOnline = false;
+      showToast("Saved locally. API sync unavailable right now.");
+    });
 }
-function deleteTx(id) { state.transactions = state.transactions.filter(t => t.id !== id); saveState(); renderTxList(); }
+function deleteTx(id) {
+  const tx = state.transactions.find(t => t.id === id);
+  state.transactions = state.transactions.filter(t => t.id !== id);
+  saveState();
+  renderTxList();
+
+  if (!tx) return;
+  deleteRemoteTransaction(tx)
+    .then(() => {
+      apiOnline = true;
+    })
+    .catch(() => {
+      apiOnline = false;
+    });
+}
 function renderTxList() {
   const el = document.getElementById("tx-list"); if (!el) return;
   el.innerHTML = state.transactions.map(t => `
@@ -1338,8 +1523,18 @@ function selectGoalIcon(btn) {
 function addGoal(e) {
   e.preventDefault();
   const colors = ["#00D2FF","#00E676","#FFB800","#6C5CE7","#FF6B9D","#54A0FF"];
-  state.savingsGoals.push({ id: nextId(state.savingsGoals), name: document.getElementById("goal-name").value, icon: selectedGoalIcon, color: colors[state.savingsGoals.length % colors.length], target: parseFloat(document.getElementById("goal-target").value), saved: 0 });
+  const goal = { id: nextId(state.savingsGoals), name: document.getElementById("goal-name").value, icon: selectedGoalIcon, color: colors[state.savingsGoals.length % colors.length], target: parseFloat(document.getElementById("goal-target").value), saved: 0 };
+  state.savingsGoals.push(goal);
   saveState(); hideModal(); renderGoals();
+
+  createRemoteGoal(goal)
+    .then(() => {
+      apiOnline = true;
+    })
+    .catch(() => {
+      apiOnline = false;
+      showToast("Goal saved locally. API sync unavailable right now.");
+    });
 }
 function showAddFundsModal(goalId) {
   const g = state.savingsGoals.find(g => g.id === goalId);
@@ -1354,6 +1549,15 @@ function addFunds(e, goalId) {
   g.saved += parseFloat(document.getElementById("fund-amount").value) || 0;
   if (g.saved > g.target) g.saved = g.target;
   saveState(); hideModal(); renderGoals();
+
+  updateRemoteGoal(g)
+    .then(() => {
+      apiOnline = true;
+    })
+    .catch(() => {
+      apiOnline = false;
+      showToast("Updated locally. API sync unavailable right now.");
+    });
 }
 
 // FAB click
@@ -1812,19 +2016,29 @@ function addRecommendationToTracker(encodedCategory, encodedName, amount) {
     return;
   }
 
-  state.transactions.unshift({
+  const tx = {
     id: nextId(state.transactions),
     type: "expense",
     amount: safeAmount,
     category,
     description: `Recommendation: ${name || "Suggested item"}`,
     date: new Date().toISOString().split("T")[0]
-  });
+  };
+
+  state.transactions.unshift(tx);
 
   saveState();
   hideModal();
   showToast(`Added <strong>${escapeHtml(name || "item")}</strong> (${fmt(safeAmount)}) to Daily Tracker.`);
   navigate("tracker");
+
+  createRemoteTransaction(tx)
+    .then(() => {
+      apiOnline = true;
+    })
+    .catch(() => {
+      apiOnline = false;
+    });
 }
 
 function buildTipsSection() {
@@ -1873,6 +2087,13 @@ document.getElementById("topbar-date").textContent = dateStr(new Date());
 updateNames();
 syncProfileTypeControls();
 initRouter();
+
+syncStateFromApi().then((synced) => {
+  if (!synced) return;
+  updateNames();
+  syncProfileTypeControls();
+  renderPage(currentPage);
+});
 
 // Keep clean URLs after reading profile from query param.
 if (location.search.includes("profile=")) {
