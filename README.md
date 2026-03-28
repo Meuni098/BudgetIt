@@ -55,3 +55,20 @@ Available endpoints:
 
 - Data is persisted in `BudgetIT/data/store.json`.
 - Update this README as your project scope evolves.
+
+## Deploying To Vercel
+
+This repository uses a subfolder (`BudgetIT/`) for the frontend files. A root `vercel.json` is included so Vercel routes `/` and app assets correctly.
+
+### Recommended Vercel settings
+
+- Framework Preset: `Other`
+- Root Directory: repository root (do not switch to `BudgetIT` when using the included `vercel.json`)
+- Build Command: leave empty
+- Output Directory: leave empty
+
+### Important backend note
+
+The current Express backend (`BudgetIT/server.js`) is designed for local Node runtime and file-based storage. Vercel static hosting does not run that server as-is.
+
+If you want API endpoints on Vercel, move API routes to serverless functions (for example `api/*.js`) and use a cloud database instead of writing to local files.
