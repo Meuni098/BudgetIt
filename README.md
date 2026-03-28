@@ -67,8 +67,36 @@ This repository uses a subfolder (`BudgetIT/`) for the frontend files. A root `v
 - Build Command: leave empty
 - Output Directory: leave empty
 
-### Important backend note
+### Backend on Vercel
 
-The current Express backend (`BudgetIT/server.js`) is designed for local Node runtime and file-based storage. Vercel static hosting does not run that server as-is.
+This repo now includes serverless API routes under `api/` for Vercel:
 
-If you want API endpoints on Vercel, move API routes to serverless functions (for example `api/*.js`) and use a cloud database instead of writing to local files.
+- `GET /api/health`
+- `GET /api/summary`
+- `GET/POST /api/income`
+- `PUT/DELETE /api/income/:id`
+- `GET/POST /api/expenses`
+- `PUT/DELETE /api/expenses/:id`
+- `GET/POST /api/savings-goals`
+- `PUT/DELETE /api/savings-goals/:id`
+
+### Persistent data with Vercel KV
+
+By default, serverless functions can fall back to temporary `/tmp` file storage. For persistent data, connect Vercel KV.
+
+1. In Vercel project dashboard, add **Storage** -> **KV**.
+2. Confirm environment variables are present:
+	 - `KV_REST_API_URL`
+	 - `KV_REST_API_TOKEN`
+3. Redeploy.
+
+After deploy, verify storage mode:
+
+- Open `/api/health`
+- Check the `storage` field:
+	- `vercel-kv` means persistent cloud storage is active.
+	- `tmp-file` means KV vars are not detected yet.
+
+### Local development note
+
+The local Express server (`BudgetIT/server.js`) still works for development and uses `BudgetIT/data/store.json`.

@@ -1,6 +1,6 @@
 const { cors, parseCollection, readDb, writeDb } = require("../../_lib/db");
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
 
@@ -10,13 +10,13 @@ module.exports = (req, res) => {
   const id = String(req.query.id || "");
   if (!id) return res.status(400).json({ error: "id is required" });
 
-  const db = readDb();
+  const db = await readDb();
   const index = db[collection].findIndex((entry) => String(entry.id) === id);
   if (index === -1) return res.status(404).json({ error: "Item not found" });
 
   if (req.method === "DELETE") {
     const [removed] = db[collection].splice(index, 1);
-    writeDb(db);
+    await writeDb(db);
     return res.status(200).json({ deleted: true, item: removed });
   }
 
@@ -35,7 +35,7 @@ module.exports = (req, res) => {
     };
 
     db[collection][index] = updated;
-    writeDb(db);
+    await writeDb(db);
     return res.status(200).json(updated);
   }
 

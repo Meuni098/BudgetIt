@@ -4,12 +4,12 @@ function sumAmount(items) {
   return items.reduce((total, item) => total + Number(item.amount || 0), 0);
 }
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   cors(res);
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
-  const db = readDb();
+  const db = await readDb();
   const incomeTotal = sumAmount(db.income);
   const expenseTotal = sumAmount(db.expenses);
   const savingsGoalTotal = sumAmount(db.savingsGoals);
