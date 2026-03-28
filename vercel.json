@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/api/summary",
+      "destination": "/api/summary"
+    },
+    {
+      "source": "/api/:collection",
+      "destination": "/api/collection/:collection"
+    },
+    {
+      "source": "/api/:collection/:id",
+      "destination": "/api/collection/:collection/:id"
+    },
+    {
+      "source": "/",
+      "destination": "/BudgetIT/index.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/BudgetIT/app.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/BudgetIT/$1"
+    }
+  ]
+}

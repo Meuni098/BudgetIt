@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BudgetIT — Smart Money, Smart Splits</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Clash Display is simulated via Space Grotesk Bold/ExtraBold for weight consistency as it's a premium font often loaded via local CDN or specific providers -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#00d2ff",
+              "on-background": "#e4e1e9",
+              "on-error": "#690005",
+              "background": "#0A0A0F",
+              "on-primary-fixed-variant": "#4029ba",
+              "surface-container-high": "#242438",
+              "secondary": "#a5e7ff",
+              "on-secondary-container": "#00566a",
+              "primary": "#c6bfff",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-tertiary-fixed": "#221b00",
+              "inverse-surface": "#e4e1e9",
+              "on-secondary-fixed-variant": "#004e60",
+              "on-surface-variant": "#c8c4d7",
+              "surface": "#12121A",
+              "primary-container": "#6c5ce7",
+              "tertiary": "#e9c400",
+              "surface-container-highest": "#35343a",
+              "outline": "#928ea0",
+              "on-primary-fixed": "#160066",
+              "surface-bright": "#39383e",
+              "primary-fixed-dim": "#c6bfff",
+              "on-surface": "#F0F0F5",
+              "error": "#ffb4ab",
+              "surface-container-lowest": "#0e0e13",
+              "primary-fixed": "#e4dfff",
+              "on-tertiary-container": "#4c3f00",
+              "on-error-container": "#ffdad6",
+              "on-primary-container": "#faf6ff",
+              "on-primary": "#2900a0",
+              "surface-dim": "#131318",
+              "on-secondary": "#003543",
+              "inverse-on-surface": "#303036",
+              "error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#544600",
+              "surface-tint": "#c6bfff",
+              "outline-variant": "#474554",
+              "secondary-fixed-dim": "#47d6ff",
+              "on-tertiary": "#3a3000",
+              "surface-variant": "#35343a",
+              "tertiary-container": "#c9a900",
+              "on-secondary-fixed": "#001f28",
+              "surface-container": "#1f1f25",
+              "secondary-fixed": "#b6ebff",
+              "tertiary-fixed": "#ffe16d",
+              "inverse-primary": "#5847d2",
+              "surface-container-low": "#1A1A2E"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk", "sans-serif"],
+              "body": ["DM Sans", "sans-serif"],
+              "label": ["Space Grotesk", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"],
+              "clash": ["Space Grotesk", "sans-serif"] /* Fallback for layout */
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .duotone-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400;
+        }
+        .glass-panel {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .clash-style {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A40;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-[#0A0A0F] text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-[#12121A] border-r border-[#2A2A40] shadow-2xl flex flex-col justify-between py-6 px-4 z-50">
+<div class="space-y-8">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(108,92,231,0.3)]">
+<span class="material-symbols-outlined text-white" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-[#F0F0F5]">BudgetIT</h1>
+<p class="text-xs text-gray-400 font-label uppercase tracking-widest">Student Edition</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="dashboard">dashboard</span>
+<span class="font-label font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="calendar_today">calendar_today</span>
+<span class="font-label font-semibold">Daily Tracker</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-primary-container/10 rounded-xl font-semibold shadow-[0_0_15px_rgba(108,92,231,0.1)] scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label">Budget Planner</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="savings">savings</span>
+<span class="font-label font-semibold">Savings Goals</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="workspace_premium">workspace_premium</span>
+<span class="font-label font-semibold">Saving Challenge</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="monitoring">monitoring</span>
+<span class="font-label font-semibold">Analytics</span>
+</a>
+</nav>
+</div>
+<div class="space-y-4">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label font-semibold">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-2 py-4 border-t border-[#2A2A40]">
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border-2 border-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8wWQLD3iSs_l-aalO-qgwD8-qyBLykvdKg0QKIQ0HQXB7vSvEcCmF7dnlYc8Cu4XgfsMZTZ3fFO4j41qOX1vBHR9Vlv-d164vnnU_sOPWSBql5J7DnfFJgn0V6LSYPQA7nqk1_gZL83NBpOj1gvM_ZmoRf8OrfqOSx8n7ACkQgp-3SnTZ_ePz5NXfZ-QlQyvcfNO4bCo1SoBgEV-pKQVfNkmmpcy_lkt2GznwkMh2WizkpaKkLnXxGaAn4yk-Fwo_L7ZtNvQC3n0"/>
+<div class="overflow-hidden">
+<p class="text-sm font-semibold text-[#F0F0F5] truncate">Eunice Rodriguez</p>
+<p class="text-xs text-gray-500">Premium Plan</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 right-0 h-[64px] z-40 bg-[#0A0A0F]/60 backdrop-blur-xl flex justify-between items-center w-full px-8">
+<div class="flex items-center gap-2">
+<span class="text-[#F0F0F5] font-medium font-headline">Good morning, Eunice!</span>
+<span class="text-gray-500 text-sm">• Monday, Oct 23</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/10">
+<span class="material-symbols-outlined text-gray-400 text-lg mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-48 p-0" placeholder="Search transactions..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="text-gray-400 hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-[#0A0A0F]"></span>
+</button>
+</div>
+</div>
+</header>
+<section class="p-8 space-y-8 max-w-[1440px] mx-auto">
+<!-- Income Setup Card -->
+<div class="bg-[#12121A] border border-[#2A2A40] rounded-[16px] p-6 shadow-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-primary/10 transition-all duration-700"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="space-y-1">
+<h2 class="text-[22px] font-semibold font-headline text-[#F0F0F5]">Your Monthly Budget</h2>
+<p class="text-[15px] text-[#A0A0B8]">Using the 50/30/20 rule — your budget is automatically calculated</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/5">
+<span class="text-gray-400 font-label font-medium">Monthly Income:</span>
+<div class="flex items-center gap-3">
+<span class="text-[24px] font-medium font-mono text-[#F0F0F5]">₱15,000.00</span>
+<button class="w-10 h-10 rounded-xl bg-[#1A1A2E] text-primary flex items-center justify-center hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Three Category Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Card 1: Needs -->
+<div class="bg-[#12121A] border border-[#2A2A40] rounded-[16px] relative overflow-hidden flex flex-col hover:border-[#00D2FF]/30 transition-colors duration-300">
+<div class="h-1 bg-[#00D2FF] w-full"></div>
+<div class="p-7 flex flex-col h-full">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-2xl bg-[#00D2FF]/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#00D2FF] text-[28px]" data-icon="house" data-weight="fill" style="font-variation-settings: 'FILL' 1;">house</span>
+</div>
+<div class="text-right">
+<h3 class="text-2xl font-bold font-headline text-[#F0F0F5]">Needs</h3>
+<p class="text-sm text-[#6B6B85]">50% of income</p>
+</div>
+</div>
+<div class="mb-8">
+<span class="clash-style text-[36px] text-[#00D2FF]">₱7,500.00</span>
+</div>
+<div class="space-y-5 flex-grow">
+<!-- Category Row -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Rent</span>
+<span class="font-mono text-[#A0A0B8]">₱3,000</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00D2FF] w-[40%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Food</span>
+<span class="font-mono text-[#A0A0B8]">₱2,500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00D2FF] w-[33%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Transport</span>
+<span class="font-mono text-[#A0A0B8]">₱1,200</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00D2FF] w-[16%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Utilities</span>
+<span class="font-mono text-[#A0A0B8]">₱800</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00D2FF] w-[11%] rounded-full"></div>
+</div>
+</div>
+</div>
+<button class="mt-8 flex items-center gap-2 text-primary font-medium text-sm hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                            Add Category
+                        </button>
+</div>
+</div>
+<!-- Card 2: Wants -->
+<div class="bg-[#12121A] border border-[#2A2A40] rounded-[16px] relative overflow-hidden flex flex-col hover:border-[#6C5CE7]/30 transition-colors duration-300">
+<div class="h-1 bg-[#6C5CE7] w-full"></div>
+<div class="p-7 flex flex-col h-full">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-2xl bg-[#6C5CE7]/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#6C5CE7] text-[28px]" data-icon="shopping_bag" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+</div>
+<div class="text-right">
+<h3 class="text-2xl font-bold font-headline text-[#F0F0F5]">Wants</h3>
+<p class="text-sm text-[#6B6B85]">30% of income</p>
+</div>
+</div>
+<div class="mb-8">
+<span class="clash-style text-[36px] text-[#6C5CE7]">₱4,500.00</span>
+</div>
+<div class="space-y-5 flex-grow">
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Entertainment</span>
+<span class="font-mono text-[#A0A0B8]">₱1,500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#6C5CE7] w-[33%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Shopping</span>
+<span class="font-mono text-[#A0A0B8]">₱1,500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#6C5CE7] w-[33%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Dining Out</span>
+<span class="font-mono text-[#A0A0B8]">₱1,000</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#6C5CE7] w-[22%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Subscriptions</span>
+<span class="font-mono text-[#A0A0B8]">₱500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#6C5CE7] w-[11%] rounded-full"></div>
+</div>
+</div>
+</div>
+<button class="mt-8 flex items-center gap-2 text-primary font-medium text-sm hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                            Add Category
+                        </button>
+</div>
+</div>
+<!-- Card 3: Savings -->
+<div class="bg-[#12121A] border border-[#2A2A40] rounded-[16px] relative overflow-hidden flex flex-col hover:border-[#00E676]/30 transition-colors duration-300">
+<div class="h-1 bg-[#00E676] w-full"></div>
+<div class="p-7 flex flex-col h-full">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 rounded-2xl bg-[#00E676]/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#00E676] text-[28px]" data-icon="savings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">savings</span>
+</div>
+<div class="text-right">
+<h3 class="text-2xl font-bold font-headline text-[#F0F0F5]">Savings</h3>
+<p class="text-sm text-[#6B6B85]">20% of income</p>
+</div>
+</div>
+<div class="mb-8">
+<span class="clash-style text-[36px] text-[#00E676]">₱3,000.00</span>
+</div>
+<div class="space-y-5 flex-grow">
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Emergency Fund</span>
+<span class="font-mono text-[#A0A0B8]">₱1,500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00E676] w-[50%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Goals</span>
+<span class="font-mono text-[#A0A0B8]">₱1,000</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00E676] w-[33%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="font-medium text-[#F0F0F5]">Challenge</span>
+<span class="font-mono text-[#A0A0B8]">₱500</span>
+</div>
+<div class="w-full h-1.5 bg-[#1A1A2E] rounded-full overflow-hidden">
+<div class="h-full bg-[#00E676] w-[17%] rounded-full"></div>
+</div>
+</div>
+</div>
+<button class="mt-8 flex items-center gap-2 text-primary font-medium text-sm hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                            Add Category
+                        </button>
+</div>
+</div>
+</div>
+<!-- Visual Donut Chart Card -->
+<div class="bg-[#12121A] border border-[#2A2A40] rounded-[16px] p-8 flex flex-col md:flex-row items-center gap-12 shadow-2xl relative">
+<!-- Donut Chart Left (50%) -->
+<div class="w-full md:w-1/2 flex justify-center relative">
+<div class="relative w-[240px] h-[240px]">
+<!-- SVG Donut Chart -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle class="text-[#1A1A2E]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="12"></circle>
+<!-- Needs Segment (50%) -->
+<circle class="text-[#00D2FF]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="125.6 125.6" stroke-dashoffset="0" stroke-linecap="round" stroke-width="12"></circle>
+<!-- Wants Segment (30%) -->
+<circle class="text-[#6C5CE7]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="75.4 175.8" stroke-dashoffset="-125.6" stroke-linecap="round" stroke-width="12"></circle>
+<!-- Savings Segment (20%) -->
+<circle class="text-[#00E676]" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="50.2 201.0" stroke-dashoffset="-201" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<!-- Center Content -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-[24px] font-bold font-mono text-[#F0F0F5]">₱15,000</span>
+<span class="text-[13px] text-[#6B6B85] font-body uppercase tracking-wider">Total Budget</span>
+</div>
+</div>
+</div>
+<!-- Legend Right (50%) -->
+<div class="w-full md:w-1/2 space-y-6">
+<div>
+<h4 class="text-xl font-headline font-semibold mb-2">Budget Distribution</h4>
+<p class="text-gray-400 text-sm">Visual breakdown of your 50/30/20 allocation across all accounts.</p>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#00D2FF] shadow-[0_0_8px_rgba(0,210,255,0.4)]"></div>
+<span class="font-medium text-[#F0F0F5]">Needs</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-mono text-[#A0A0B8]">₱7,500.00</span>
+<span class="text-sm font-bold text-[#00D2FF] w-8">50%</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#6C5CE7] shadow-[0_0_8px_rgba(108,92,231,0.4)]"></div>
+<span class="font-medium text-[#F0F0F5]">Wants</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-mono text-[#A0A0B8]">₱4,500.00</span>
+<span class="text-sm font-bold text-[#6C5CE7] w-8">30%</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#00E676] shadow-[0_0_8px_rgba(0,230,118,0.4)]"></div>
+<span class="font-medium text-[#F0F0F5]">Savings</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="font-mono text-[#A0A0B8]">₱3,000.00</span>
+<span class="text-sm font-bold text-[#00E676] w-8">20%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB Action (Contextual to Budget Planner) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary-container text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 z-50">
+<span class="material-symbols-outlined text-[32px]" data-icon="save">save</span>
+</button>
+</body></html>

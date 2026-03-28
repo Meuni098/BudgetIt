@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BudgetIT | Daily Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#00d2ff",
+              "on-background": "#e4e1e9",
+              "on-error": "#690005",
+              "background": "#0A0A0F",
+              "on-primary-fixed-variant": "#4029ba",
+              "surface-container-high": "#2a292f",
+              "secondary": "#a5e7ff",
+              "on-secondary-container": "#00566a",
+              "primary": "#c6bfff",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-tertiary-fixed": "#221b00",
+              "inverse-surface": "#e4e1e9",
+              "on-secondary-fixed-variant": "#004e60",
+              "on-surface-variant": "#c8c4d7",
+              "surface": "#12121A",
+              "primary-container": "#6c5ce7",
+              "tertiary": "#e9c400",
+              "surface-container-highest": "#35343a",
+              "outline": "#928ea0",
+              "on-primary-fixed": "#160066",
+              "surface-bright": "#39383e",
+              "primary-fixed-dim": "#c6bfff",
+              "on-surface": "#e4e1e9",
+              "error": "#FF5252",
+              "surface-container-lowest": "#0e0e13",
+              "primary-fixed": "#e4dfff",
+              "on-tertiary-container": "#4c3f00",
+              "on-error-container": "#ffdad6",
+              "on-primary-container": "#faf6ff",
+              "on-primary": "#2900a0",
+              "surface-dim": "#131318",
+              "on-secondary": "#003543",
+              "inverse-on-surface": "#303036",
+              "error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#544600",
+              "surface-tint": "#c6bfff",
+              "outline-variant": "#474554",
+              "secondary-fixed-dim": "#47d6ff",
+              "on-tertiary": "#3a3000",
+              "surface-variant": "#35343a",
+              "tertiary-container": "#c9a900",
+              "on-secondary-fixed": "#001f28",
+              "surface-container": "#1f1f25",
+              "secondary-fixed": "#b6ebff",
+              "tertiary-fixed": "#ffe16d",
+              "inverse-primary": "#5847d2",
+              "surface-container-low": "#1A1A2E"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["DM Sans"],
+              "label": ["Space Grotesk"],
+              "data": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .clash-display { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+        .glass-panel {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen selection:bg-primary/30">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-[#12121A] border-r border-[#2A2A40] shadow-2xl flex flex-col justify-between py-6 px-4 z-50">
+<div class="space-y-8">
+<div class="px-4">
+<span class="text-2xl font-bold tracking-tight text-[#F0F0F5] font-headline">BudgetIT</span>
+<p class="text-xs text-gray-400 mt-1 uppercase tracking-widest font-label">Student Plan</p>
+</div>
+<nav class="space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label font-semibold">Dashboard</span>
+</a>
+<!-- Daily Tracker (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#6C5CE7] bg-[#6C5CE7]/10 rounded-xl font-semibold shadow-[0_0_15px_rgba(108,92,231,0.3)]" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label">Daily Tracker</span>
+</a>
+<!-- Other Nav Items -->
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label font-semibold">Budget Planner</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="savings">savings</span>
+<span class="font-label font-semibold">Savings Goals</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="workspace_premium">workspace_premium</span>
+<span class="font-label font-semibold">Saving Challenge</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] hover:bg-[#1A1A2E] hover:scale-[1.02] transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label font-semibold">Analytics</span>
+</a>
+</nav>
+</div>
+<div class="px-2 space-y-4">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-2xl border border-outline-variant/10">
+<img alt="User profile avatar" class="w-10 h-10 rounded-full bg-primary-container/20" data-alt="close-up of a smiling young college student with glasses in a modern library setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ2l08TTVK6muYztfVtw4zaUyo8V0ISK4TQg18vY5rGoBmT6u_O_buPWrSEJfDgSUiipZrgUk59LmgXMP4Wquepqmbaa-JGiXdbSxwmIT14_-bbvASB9QJtyTtOKZlbwZHBZ009SODYFBSIlwRpJa8rGO1WqT1pF7DU3VRAli_gagm7mZv9NyDeFN7AxY78t6fH_ZU4phI7fZrYVM5j18pdizKP1q361VxX6K691SwDkvIICYAeGpTNqYgh3ksOXJCqFf0g-gS_Lg"/>
+<div>
+<p class="text-sm font-bold text-[#F0F0F5]">Eunice!</p>
+<p class="text-[10px] text-gray-500 uppercase font-label">View Profile</p>
+</div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-[#F0F0F5] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label font-semibold">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 h-[64px] z-40 bg-[#0A0A0F]/60 backdrop-blur-xl flex justify-between items-center w-full px-8">
+<h1 class="text-[#F0F0F5] font-medium font-headline text-lg">Good morning, Eunice!</h1>
+<div class="flex items-center gap-4">
+<button class="p-2 text-gray-400 hover:text-[#6C5CE7] transition-colors rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="relative">
+<button class="p-2 text-gray-400 hover:text-[#6C5CE7] transition-colors rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-[#0A0A0F]"></span>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 flex-1 space-y-8">
+<!-- Quick Add Transaction Section -->
+<section class="w-full">
+<div class="bg-gradient-to-br from-[#12121A] to-[#6c5ce70d] border border-[#2A2A40] rounded-[16px] p-[28px] shadow-xl">
+<h2 class="font-headline font-semibold text-[22px] text-[#F0F0F5]">Add Transaction</h2>
+<form class="flex flex-wrap items-end gap-[16px] mt-[20px]">
+<!-- Type Toggle -->
+<div class="flex flex-col gap-2">
+<span class="text-[13px] font-medium text-[#6B6B85]">Transaction Type</span>
+<div class="flex p-1 bg-surface-container-low rounded-[12px] h-[44px]">
+<button class="px-4 rounded-[10px] text-xs font-bold transition-all duration-200 bg-[#00E676] text-[#1A1A2E]" type="button">INCOME</button>
+<button class="px-4 rounded-[10px] text-xs font-bold transition-all duration-200 text-[#6B6B85] hover:text-[#F0F0F5]" type="button">EXPENSE</button>
+</div>
+</div>
+<!-- Amount Input -->
+<div class="flex flex-col gap-2 min-w-[140px]">
+<label class="text-[13px] font-medium text-[#6B6B85] font-body">Amount (₱)</label>
+<input class="h-[44px] bg-[#1A1A2E] border border-[#2A2A40] rounded-[10px] px-[16px] text-on-surface font-data text-base focus:ring-0 focus:border-[#6C5CE7] focus:shadow-[0_0_0_3px_rgba(108,92,231,0.2)] transition-all outline-none" placeholder="0.00" type="text"/>
+</div>
+<!-- Category Dropdown -->
+<div class="flex flex-col gap-2 min-w-[160px]">
+<label class="text-[13px] font-medium text-[#6B6B85]">Category</label>
+<div class="relative">
+<select class="appearance-none h-[44px] w-full bg-[#1A1A2E] border border-[#2A2A40] rounded-[10px] px-[16px] pr-10 text-on-surface font-body text-sm focus:ring-0 focus:border-[#6C5CE7] outline-none">
+<option>Food</option>
+<option>Transport</option>
+<option>School</option>
+<option>Entertainment</option>
+<option>Shopping</option>
+<option>Health</option>
+<option>Bills</option>
+<option>Other</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-gray-500 pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Description Input -->
+<div class="flex flex-col gap-2 flex-grow min-w-[200px]">
+<label class="text-[13px] font-medium text-[#6B6B85]">Description (optional)</label>
+<input class="h-[44px] bg-[#1A1A2E] border border-[#2A2A40] rounded-[10px] px-[16px] text-on-surface font-body text-sm focus:ring-0 focus:border-[#6C5CE7] transition-all outline-none" placeholder="What was this for?" type="text"/>
+</div>
+<!-- Date Input -->
+<div class="flex flex-col gap-2">
+<label class="text-[13px] font-medium text-[#6B6B85]">Date</label>
+<input class="h-[44px] bg-[#1A1A2E] border border-[#2A2A40] rounded-[10px] px-[16px] text-on-surface font-body text-sm focus:ring-0 focus:border-[#6C5CE7] transition-all outline-none" type="date" value="2026-03-24"/>
+</div>
+<!-- Add Button -->
+<button class="h-[44px] px-[20px] bg-[#6C5CE7] hover:bg-[#5847D2] text-white rounded-[10px] font-bold text-sm flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-[#6C5CE7]/20">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+                            Add Entry
+                        </button>
+</form>
+</div>
+</section>
+<!-- Filters & View Toggle Section -->
+<section class="flex items-center justify-between w-full">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#6B6B85] hover:text-[#F0F0F5] transition-colors rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<h3 class="font-headline font-semibold text-[18px] text-[#F0F0F5]">March 2026</h3>
+<button class="p-2 text-[#6B6B85] hover:text-[#F0F0F5] transition-colors rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex p-1 bg-[#12121A] border border-[#2A2A40] rounded-[12px] h-[40px]">
+<button class="px-4 rounded-[8px] text-xs font-bold transition-all bg-[#6C5CE7]/20 text-[#6C5CE7]">LIST</button>
+<button class="px-4 rounded-[8px] text-xs font-bold transition-all text-[#6B6B85] hover:text-[#F0F0F5]">CALENDAR</button>
+</div>
+</section>
+<!-- Transaction List Section -->
+<section class="w-full">
+<div class="bg-surface border border-[#2A2A40] rounded-[16px] overflow-hidden shadow-2xl">
+<!-- Table Header -->
+<div class="sticky top-0 h-[44px] bg-surface-container-low px-[24px] flex items-center">
+<div class="grid grid-cols-12 w-full gap-4">
+<div class="col-span-2 text-[12px] font-medium text-[#6B6B85] uppercase tracking-[0.5px]">Date</div>
+<div class="col-span-3 text-[12px] font-medium text-[#6B6B85] uppercase tracking-[0.5px]">Category</div>
+<div class="col-span-4 text-[12px] font-medium text-[#6B6B85] uppercase tracking-[0.5px]">Description</div>
+<div class="col-span-2 text-[12px] font-medium text-[#6B6B85] uppercase tracking-[0.5px]">Amount</div>
+<div class="col-span-1 text-right text-[12px] font-medium text-[#6B6B85] uppercase tracking-[0.5px]">Actions</div>
+</div>
+</div>
+<!-- Rows -->
+<div class="divide-y divide-[#1A1A2E]">
+<!-- Row 1 -->
+<div class="group h-[56px] px-[24px] flex items-center hover:bg-surface-container-low transition-colors duration-150">
+<div class="grid grid-cols-12 w-full items-center gap-4">
+<div class="col-span-2 text-[14px] text-[#A0A0B8]">Mar 24, 2026</div>
+<div class="col-span-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="restaurant">restaurant</span>
+<span class="text-[14px] font-medium text-[#F0F0F5]">Food</span>
+</div>
+<div class="col-span-4 text-[14px] text-[#A0A0B8]">Iced Coffee and Sandwich</div>
+<div class="col-span-2 text-[15px] font-data font-medium text-error">−₱185.00</div>
+<div class="col-span-1 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[#6B6B85] hover:text-[#F0F0F5] transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span></button>
+<button class="text-[#6B6B85] hover:text-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="group h-[56px] px-[24px] flex items-center hover:bg-surface-container-low transition-colors duration-150">
+<div class="grid grid-cols-12 w-full items-center gap-4">
+<div class="col-span-2 text-[14px] text-[#A0A0B8]">Mar 24, 2026</div>
+<div class="col-span-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="payments">payments</span>
+<span class="text-[14px] font-medium text-[#F0F0F5]">Income</span>
+</div>
+<div class="col-span-4 text-[14px] text-[#A0A0B8]">Allowance from Mom</div>
+<div class="col-span-2 text-[15px] font-data font-medium text-[#00E676]">+₱2,500.00</div>
+<div class="col-span-1 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[#6B6B85] hover:text-[#F0F0F5] transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span></button>
+<button class="text-[#6B6B85] hover:text-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="group h-[56px] px-[24px] flex items-center hover:bg-surface-container-low transition-colors duration-150">
+<div class="grid grid-cols-12 w-full items-center gap-4">
+<div class="col-span-2 text-[14px] text-[#A0A0B8]">Mar 23, 2026</div>
+<div class="col-span-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary-container" data-icon="directions_bus">directions_bus</span>
+<span class="text-[14px] font-medium text-[#F0F0F5]">Transport</span>
+</div>
+<div class="col-span-4 text-[14px] text-[#A0A0B8]">Jeepney fare to Campus</div>
+<div class="col-span-2 text-[15px] font-data font-medium text-error">−₱15.00</div>
+<div class="col-span-1 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[#6B6B85] hover:text-[#F0F0F5] transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span></button>
+<button class="text-[#6B6B85] hover:text-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="group h-[56px] px-[24px] flex items-center hover:bg-surface-container-low transition-colors duration-150">
+<div class="grid grid-cols-12 w-full items-center gap-4">
+<div class="col-span-2 text-[14px] text-[#A0A0B8]">Mar 23, 2026</div>
+<div class="col-span-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary-container" data-icon="school">school</span>
+<span class="text-[14px] font-medium text-[#F0F0F5]">School</span>
+</div>
+<div class="col-span-4 text-[14px] text-[#A0A0B8]">Photocopying - Bio 101</div>
+<div class="col-span-2 text-[15px] font-data font-medium text-error">−₱45.00</div>
+<div class="col-span-1 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[#6B6B85] hover:text-[#F0F0F5] transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span></button>
+<button class="text-[#6B6B85] hover:text-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Row 5 -->
+<div class="group h-[56px] px-[24px] flex items-center hover:bg-surface-container-low transition-colors duration-150">
+<div class="grid grid-cols-12 w-full items-center gap-4">
+<div class="col-span-2 text-[14px] text-[#A0A0B8]">Mar 22, 2026</div>
+<div class="col-span-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-[#FFB800]" data-icon="shopping_cart">shopping_cart</span>
+<span class="text-[14px] font-medium text-[#F0F0F5]">Shopping</span>
+</div>
+<div class="col-span-4 text-[14px] text-[#A0A0B8]">New Notebooks</div>
+<div class="col-span-2 text-[15px] font-data font-medium text-error">−₱320.00</div>
+<div class="col-span-1 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[#6B6B85] hover:text-[#F0F0F5] transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span></button>
+<button class="text-[#6B6B85] hover:text-error transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / Pagination -->
+<div class="h-[56px] px-[24px] flex items-center justify-between bg-surface-container-low/50">
+<span class="text-xs text-[#6B6B85]">Showing 1-5 of 42 transactions</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6B85] hover:bg-surface-container-high transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6B85] hover:bg-surface-container-high transition-colors text-xs font-bold">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6B85] hover:bg-surface-container-high transition-colors text-xs font-bold">3</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6B85] hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
