@@ -331,8 +331,22 @@ body.mobile-nav-open #sidebar-backdrop {
     gap: 10px;
   }
 
+  header h2 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  header > .flex.items-center {
+    margin-left: auto;
+    align-self: flex-start;
+  }
+
   .page-section {
     padding: 16px !important;
+  }
+
+  main {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
   }
 
   #topbar-profile-type {
@@ -341,15 +355,48 @@ body.mobile-nav-open #sidebar-backdrop {
 
   #fab-btn {
     right: 16px !important;
-    bottom: 16px !important;
+    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
     width: 52px !important;
     height: 52px !important;
+  }
+
+  #page-tracker #tx-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  #page-tracker #tx-form > div,
+  #page-tracker #tx-form > button {
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  #page-tracker #tx-form .seg-control {
+    height: auto;
+    width: 100%;
+  }
+
+  #page-tracker #tx-form .seg-btn {
+    flex: 1;
+  }
+
+  #page-tracker #tx-form button[type="submit"] {
+    justify-content: center;
+  }
+
+  #page-tracker .card.p-0.overflow-hidden > div:first-child {
+    display: none;
   }
 
   #page-tracker #tx-list > .group {
     height: auto;
     padding-top: 12px;
     padding-bottom: 12px;
+    border: 1px solid #2A2A40;
+    border-radius: 12px;
+    margin: 8px 8px 0;
+    background: #12121A;
   }
 
   #page-tracker #tx-list .grid {
@@ -364,6 +411,26 @@ body.mobile-nav-open #sidebar-backdrop {
   #page-tracker #tx-list .group .justify-end {
     justify-content: flex-start;
     opacity: 1;
+  }
+
+  #page-tracker #tx-list {
+    padding-bottom: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  header {
+    flex-wrap: wrap;
+  }
+
+  header h2 {
+    font-size: 19px;
+  }
+
+  #topbar-profile-type {
+    height: 36px !important;
+    min-width: 94px !important;
+    font-size: 12px;
   }
 }
 
