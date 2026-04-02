@@ -432,6 +432,47 @@ body.mobile-nav-open #sidebar-backdrop {
     min-width: 94px !important;
     font-size: 12px;
   }
+
+  #recommend-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  #recommend-mode-toggle {
+    width: 100%;
+  }
+
+  #recommend-mode-toggle .rec-mode-btn {
+    flex: 1;
+  }
+
+  #budget-donut-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  #budget-donut-wrap canvas#budgetDonut {
+    width: min(72vw, 230px) !important;
+    height: min(72vw, 230px) !important;
+  }
+
+  #budget-donut-legend {
+    width: 100%;
+  }
+
+  #budget-donut-legend > div {
+    display: grid !important;
+    grid-template-columns: 12px 1fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #budget-donut-legend > div .font-mono {
+    text-align: right;
+    font-size: 13px;
+  }
 }
 
 /* Button / Card click animations */

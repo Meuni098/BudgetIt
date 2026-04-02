@@ -920,8 +920,8 @@ function renderBudget() {
     <p class="font-clash font-bold text-4xl mt-3" style="color:${c.color}">${fmt(alloc)}</p>
     <div class="mt-5 space-y-3">${c.items.map(item => `<div class="flex justify-between"><span class="text-sm text-text-secondary">${item}</span><span class="font-mono text-sm text-text-muted">${fmtShort(Math.round(alloc / c.items.length))}</span></div>`).join("")}</div></div>`;
   }).join("")}</div>
-  <div class="card"><div class="flex items-center gap-6"><div><canvas id="budgetDonut" width="200" height="200"></canvas></div>
-    <div class="space-y-4">${cats.map(c => `<div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="text-sm">${c.name} (${c.pct}%)</span><span class="font-mono text-sm text-text-muted">${fmt(inc*c.pct/100)}</span></div>`).join("")}</div></div></div>`;
+  <div class="card"><div id="budget-donut-wrap" class="flex items-center gap-6"><div><canvas id="budgetDonut" width="200" height="200"></canvas></div>
+    <div id="budget-donut-legend" class="space-y-4">${cats.map(c => `<div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="text-sm">${c.name} (${c.pct}%)</span><span class="font-mono text-sm text-text-muted">${fmt(inc*c.pct/100)}</span></div>`).join("")}</div></div></div>`;
   renderBudgetDonut(rules);
 }
 function updateIncome(v) { state.monthlyIncome = parseFloat(v) || 0; saveState(); renderBudget(); }
@@ -1804,12 +1804,12 @@ function renderRecommend() {
 
   // Render the shell with toggle + content area
   el.innerHTML = `
-  <div class="flex items-center justify-between mb-2">
+  <div id="recommend-header" class="flex items-center justify-between mb-2">
     <div>
       <h1 class="font-headline font-bold text-[28px]">Smart Recommendations</h1>
       <p class="text-text-secondary mt-1">${profileHeadline} options tailored to your income</p>
     </div>
-    <div class="seg-control h-[44px]">
+    <div id="recommend-mode-toggle" class="seg-control h-[44px]">
       <button type="button" class="seg-btn rec-mode-btn ${recommendMode === 'monthly' ? 'active' : ''}" onclick="setRecommendMode('monthly',this)">Monthly</button>
       <button type="button" class="seg-btn rec-mode-btn ${recommendMode === 'daily' ? 'active' : ''}" onclick="setRecommendMode('daily',this)">Daily</button>
     </div>
