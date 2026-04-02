@@ -159,7 +159,7 @@ tailwind.config = {
 </div>
 
 <!-- SIDEBAR -->
-<aside id="sidebar" class="fixed left-0 top-0 h-screen w-[260px] bg-surface border-r border-border-default shadow-2xl z-50 flex flex-col justify-between py-6 px-4">
+<aside id="sidebar" aria-hidden="false" class="fixed left-0 top-0 h-screen w-[260px] bg-surface border-r border-border-default shadow-2xl z-50 flex flex-col justify-between py-6 px-4">
 <div>
   <div class="pb-6 border-b border-border-default mb-6 px-2">
     <a href="index.html" class="inline-block font-clash font-bold text-2xl tracking-tight hover:opacity-90 transition-opacity" aria-label="Go to front page">
@@ -211,11 +211,16 @@ tailwind.config = {
 </div>
 </aside>
 
+<div id="sidebar-backdrop" class="fixed inset-0 bg-background/75 backdrop-blur-[2px] z-40 hidden" aria-hidden="true"></div>
+
 <!-- MAIN CONTENT -->
 <main class="ml-[260px] min-h-screen">
 <!-- TOP BAR -->
 <header class="sticky top-0 right-0 h-[64px] bg-background/60 backdrop-blur-xl z-40 border-b border-border-default/30 flex justify-between items-center w-full px-8">
   <div class="flex flex-col">
+    <button id="mobile-menu-btn" type="button" class="hidden mb-2 h-10 w-10 items-center justify-center rounded-xl border border-border-default bg-surface-container-low text-text-primary" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation menu">
+      <span class="material-symbols-outlined text-[22px]">menu</span>
+    </button>
     <h2 class="font-headline font-semibold text-xl text-text-primary leading-tight">Good morning, <span id="topbar-name">Eunice</span>!</h2>
     <p id="topbar-date" class="text-xs text-text-muted font-body"></p>
   </div>

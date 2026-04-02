@@ -398,6 +398,49 @@ function savingsRate() { const inc = state.monthlyIncome; return inc === 0 ? 0 :
 
 // ============== ROUTING ==============
 let currentPage = "dashboard";
+
+const MOBILE_BREAKPOINT = 1024;
+
+function isMobileViewport() {
+  return window.innerWidth <= MOBILE_BREAKPOINT;
+}
+
+function setMobileNavOpen(open) {
+  const body = document.body;
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const icon = menuBtn ? menuBtn.querySelector(".material-symbols-outlined") : null;
+  const shouldOpen = !!open && isMobileViewport();
+
+  body.classList.toggle("mobile-nav-open", shouldOpen);
+
+  if (sidebar) {
+    sidebar.setAttribute("aria-hidden", shouldOpen ? "false" : String(isMobileViewport()));
+  }
+
+  if (backdrop) {
+    backdrop.classList.toggle("hidden", !shouldOpen);
+  }
+
+  if (menuBtn) {
+    menuBtn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+  }
+
+  if (icon) {
+    icon.textContent = shouldOpen ? "close" : "menu";
+  }
+}
+
+function closeMobileNav() {
+  setMobileNavOpen(false);
+}
+
+function toggleMobileNav() {
+  const isOpen = document.body.classList.contains("mobile-nav-open");
+  setMobileNavOpen(!isOpen);
+}
+
 function navigate(page) {
   // Income gate for Saving Challenge — requires monthly income
   if (page === "challenge") {
@@ -413,6 +456,7 @@ function navigate(page) {
   document.querySelectorAll(".nav-item").forEach(n => {
     n.classList.toggle("active", n.dataset.page === page);
   });
+  if (isMobileViewport()) closeMobileNav();
   renderPage(page);
 }
 function initRouter() {
@@ -441,6 +485,27 @@ function initRouter() {
   });
   const hash = location.hash.replace("#", "") || "dashboard";
   navigate(hash);
+}
+
+function initMobileNavigation() {
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const backdrop = document.getElementById("sidebar-backdrop");
+
+  if (menuBtn) {
+    menuBtn.addEventListener("click", toggleMobileNav);
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener("click", closeMobileNav);
+  }
+
+  window.addEventListener("resize", () => {
+    if (!isMobileViewport()) {
+      closeMobileNav();
+    }
+  });
+
+  setMobileNavOpen(false);
 }
 
 // ============== RENDER PAGES ==============
@@ -2091,6 +2156,7 @@ if (state.settings.theme === "light") {
 document.getElementById("topbar-date").textContent = dateStr(new Date());
 updateNames();
 syncProfileTypeControls();
+initMobileNavigation();
 initRouter();
 
 syncStateFromApi().then((synced) => {

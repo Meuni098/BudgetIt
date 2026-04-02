@@ -283,6 +283,90 @@ html:not(.dark) .toast-notification {
   color: #1A1A2E; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
 }
 
+/* App shell responsive navigation */
+#mobile-menu-btn {
+  display: none;
+}
+
+#sidebar {
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
+}
+
+#sidebar-backdrop {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+body.mobile-nav-open #sidebar-backdrop {
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  #mobile-menu-btn {
+    display: inline-flex;
+  }
+
+  #sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  body.mobile-nav-open #sidebar {
+    transform: translateX(0);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  main {
+    margin-left: 0 !important;
+  }
+
+  header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    height: auto !important;
+    min-height: 64px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .page-section {
+    padding: 16px !important;
+  }
+
+  #topbar-profile-type {
+    min-width: 104px !important;
+  }
+
+  #fab-btn {
+    right: 16px !important;
+    bottom: 16px !important;
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  #page-tracker #tx-list > .group {
+    height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  #page-tracker #tx-list .grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  #page-tracker #tx-list [class*="col-span-"] {
+    grid-column: span 1 / span 1;
+  }
+
+  #page-tracker #tx-list .group .justify-end {
+    justify-content: flex-start;
+    opacity: 1;
+  }
+}
+
 /* Button / Card click animations */
 @keyframes btnPulse {
   0% { transform: scale(1); }
